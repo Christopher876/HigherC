@@ -6,7 +6,6 @@ export class Interpreter {
     source : string;
     position : number;
     #types : string[];
-    parser : Parser;
     symbols : CSymbol;
 
     set Position(newPosition : number){
@@ -18,11 +17,10 @@ export class Interpreter {
         }
     }
 
-    constructor(source : string, position : number = 0) {
+    constructor(source : string = "", position : number = 0) {
         this.source = source;
         this.position = position;
         this.#types = [];
-        this.parser = new Parser();
         this.symbols = new CSymbol();
     }
 
@@ -102,8 +100,8 @@ export class Interpreter {
         }
 
         //Parse the line
-        this.parser.Parse(line);
-        return line.join();
+        let parser = new Parser(line);
+        return parser.Parse().toString();
     }
 
     Shell(){
