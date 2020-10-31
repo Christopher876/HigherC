@@ -101,7 +101,7 @@ export class Interpreter {
 
         //Parse the line
         let parser = new Parser(line);
-        return parser.Parse().toString();
+        return parser.Expr().toString();
     }
 
     Shell(){

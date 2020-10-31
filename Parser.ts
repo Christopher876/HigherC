@@ -20,6 +20,9 @@ export class Parser{
         this.input = input;
         this.tokens = [];
         this.pos = 0;
+
+        this.CreateTokens();
+        this.currentToken = this.tokens[0];
     }
 
     error(){
@@ -34,14 +37,23 @@ export class Parser{
 
     factor() : number{
         const token = this.currentToken;
-        this.eat("INTEGER");
-        return +token.value;
+        if(token.type === this.symbols.INTEGER){
+            this.eat(this.symbols.INTEGER);
+            return +token.value;
+        }
+        else if(token.type === this.symbols.LEFTPARENTHESIS){
+            this.eat(this.symbols.LEFTPARENTHESIS);
+            const result = this.Expr();
+            this.eat(this.symbols.RIGHTPARENTESIS);
+            return +result;
+        }
+        this.error();
+        return 0;
     }
 
     term(){
         let result : number = this.factor();
         while((this.pos <= this.input.length-1) && (this.currentToken.type === this.symbols.MULTIPLY || this.currentToken.type === this.symbols.DIVIDE)){
-            let token = this.currentToken;
             if(this.currentToken.type === this.symbols.MULTIPLY){
                 this.eat(this.symbols.MULTIPLY);
                 result = result * this.factor();
@@ -55,7 +67,7 @@ export class Parser{
         return result;
     }
 
-    Parse(){
+    CreateTokens(){
         this.input.forEach(currentValue => {
             // Are we a digit
             if(/^\d+$/.test(currentValue)){
@@ -83,17 +95,27 @@ export class Parser{
                 return;
             }
 
+            else if(currentValue === "("){
+                this.tokens.push(new Token(this.symbols.LEFTPARENTHESIS,currentValue));
+                return;
+            }
+
+            else if(currentValue === ")"){
+                this.tokens.push(new Token(this.symbols.RIGHTPARENTESIS,currentValue));
+                return;
+            }
+
             else{
                 this.error();
             }
         });
+    }
 
+    Expr(){
         // Calculate
-        this.currentToken = this.tokens[0];
         let result : number = this.term();
 
         while((this.pos <= this.input.length-1) && (this.currentToken.type === this.symbols.PLUS || this.currentToken.type === this.symbols.MINUS)){
-            let token = this.currentToken;
             if(this.currentToken.type === this.symbols.PLUS){
                 this.eat(this.symbols.PLUS);
                 result = result + this.term();

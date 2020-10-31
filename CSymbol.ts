@@ -4,4 +4,6 @@ export class CSymbol{
     MINUS : string = "MINUS";
     MULTIPLY : string = "MULTIPLY";
     DIVIDE : string = "DIVIDE";
+    LEFTPARENTHESIS : string = "LEFTPARENTESIS";
+    RIGHTPARENTESIS : string = "RIGHTPARENTHESIS";
 }
